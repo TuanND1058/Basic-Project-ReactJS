@@ -1,11 +1,25 @@
-import React from 'react';
+import React from 'react'
 
-const List = () => {
+const List = ({ people, handleRemove }) => {
   return (
     <>
-      <h2>list component</h2>
+      {people.map((person) => {
+        const { id, name, age, image } = person
+        return (
+          <article key={id} className='person'>
+            <img src={image} alt={name} />
+            <div>
+              <h4>{name}</h4>
+              <p>{age} yesrs</p>
+              <h4 style={{ color: '#ca1f1f' }} onClick={() => handleRemove(id)}>
+                Remove
+              </h4>
+            </div>
+          </article>
+        )
+      })}
     </>
-  );
-};
+  )
+}
 
-export default List;
+export default List
