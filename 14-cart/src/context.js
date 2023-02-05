@@ -6,13 +6,60 @@ import reducer from './reducer'
 const url = 'https://course-api.com/react-useReducer-cart-project'
 const AppContext = React.createContext()
 
+const initialState = {
+  loading: false,
+  cart: cartItems,
+  total: 0,
+  amount: 0
+}
+
 const AppProvider = ({ children }) => {
-  const [cart, setCart] = useState(cartItems)
+  const [state, dispatch] = useReducer(reducer, initialState)
+
+  const clearCart = () => {
+    dispatch({ type: 'CLEAR_CART' })
+  }
+
+  const remove = (id) => {
+    dispatch({ type: 'REMOVE', payload: id })
+  }
+
+  const increase = (id) => {
+    dispatch({ type: 'INCREASE', payload: id })
+  }
+
+  const decrease = (id) => {
+    dispatch({ type: 'DECREASE', payload: id })
+  }
+
+  useEffect(() => {
+    dispatch({ type: 'GET_TOTALS' })
+  }, [state.cart])
+
+  const fetchData = async () => {
+    dispatch({ type: 'LOADING' })
+    const response = await fetch(url)
+    const cart = await response.json(response)
+    dispatch({ type: 'DISPLAY-ITEMS', payload: cart })
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const toggleAmount = (id, type) => {
+    dispatch({ type: 'TOGGLE_AMOUNT', payload: { id, type } })
+  }
 
   return (
     <AppContext.Provider
       value={{
-        cart,
+        ...state,
+        clearCart,
+        remove,
+        increase,
+        decrease,
+        toggleAmount
       }}
     >
       {children}
